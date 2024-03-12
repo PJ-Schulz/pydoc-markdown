@@ -360,19 +360,14 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
         if not isinstance(obj, docspec.Module) or self.render_module_header:
             self._render_header(fp, level, obj)
 
-        render_view_source = not isinstance(obj, (docspec.Module, docspec.Variable))
-
-        if render_view_source:
-            url = self.source_linker.get_source_url(obj) if self.source_linker else None
-            source_string = self.source_format.replace("{url}", str(url)) if url else None
-            if source_string and self.source_position == "before signature":
-                fp.write(source_string + "\n\n")
+        source_string = self._get_source_view(obj)
+        if source_string and self.source_position == "before signature":
+            fp.write(source_string + "\n\n")
 
         self._render_signature_block(fp, obj)
 
-        if render_view_source:
-            if source_string and self.source_position == "after signature":
-                fp.write(source_string + "\n\n")
+        if source_string and self.source_position == "after signature":
+            fp.write(source_string + "\n\n")
 
         if obj.docstring:
             docstring = (
@@ -395,6 +390,14 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
         level += 1
         for member in getattr(obj, "members", []):
             self._render_recursive(fp, level, member)
+
+    def _get_source_view(self, obj: docspec.ApiObject):
+        render_view_source = not isinstance(obj, (docspec.Module, docspec.Variable))
+
+        if render_view_source:
+            url = self.source_linker.get_source_url(obj) if self.source_linker else None
+            source_string = self.source_format.replace("{url}", str(url)) if url else None
+            return source_string
 
     def _get_title(self, obj: docspec.ApiObject) -> str:
         title = obj.name
