@@ -225,6 +225,9 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
     #: Add a horizontal line after each object.
     horizontal_line: bool = False
 
+    #: add 'def' or 'async def' in code highlighted in front of function header
+    add_function_signature: bool = False
+
     def __post_init__(self) -> None:
         self._resolver = MarkdownReferenceResolver()
 
@@ -425,6 +428,13 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
                 title = "`{}`".format(title)
         elif not self.html_headers:
             title = self._escape(title)
+
+        if isinstance(obj, docspec.Function) and self.add_function_signature:
+            if obj.modifiers is None:
+                title = f"*`def`* {title}"
+            else:
+                title = f"*`{''.join((obj.modifiers))} def`* {title}"
+
         if isinstance(obj, docspec.Module) and self.descriptive_module_title:
             title = "Module " + title
         if isinstance(obj, docspec.Class) and self.descriptive_class_title:
