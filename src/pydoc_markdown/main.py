@@ -284,6 +284,8 @@ def cli(
     Command-line entrypoint for Pydoc-Markdown.
     """
 
+    print("Hello World")
+
     if with_processors is not None and not dump:
         error("--with-processors/--without-processors can only be used with --dump")
     if open_browser and not server:
