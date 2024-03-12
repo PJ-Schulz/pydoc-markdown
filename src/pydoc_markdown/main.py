@@ -284,9 +284,6 @@ def cli(
     Command-line entrypoint for Pydoc-Markdown.
     """
 
-    print("Hello World")
-    error("Hello World")
-
     if with_processors is not None and not dump:
         error("--with-processors/--without-processors can only be used with --dump")
     if open_browser and not server:
@@ -390,4 +387,5 @@ def cli(
 
 
 if __name__ == "__main__":
+    error("Hello World")
     cli()  # type: ignore  # https://github.com/pallets/click/issues/2227
