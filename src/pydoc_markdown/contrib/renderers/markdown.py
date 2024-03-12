@@ -222,6 +222,9 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
     #: a file relative to the context directory (usually the working directory).
     format_code_style: str = "pep8"
 
+    #: Add a horizontal line after each object.
+    horizontal_line: bool = False
+
     def __post_init__(self) -> None:
         self._resolver = MarkdownReferenceResolver()
 
@@ -378,6 +381,10 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
             if self.docstrings_as_blockquote:
                 lines = ["> " + x for x in lines]
             fp.write("\n".join(lines))
+
+            if self.horizontal_line:
+                fp.write("\n\n---")
+
             fp.write("\n\n")
 
     def _render_recursive(self, fp: t.TextIO, level: int, obj: docspec.ApiObject):
