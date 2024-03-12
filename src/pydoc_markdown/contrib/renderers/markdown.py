@@ -449,6 +449,12 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
                 title += self.descriptive_class_title[1:]
             else:
                 title = self.descriptive_class_title + title
+
+        source_string = self._get_source_view(obj)
+        if source_string and self.source_position == "behind header":
+            title += ' '
+            title += source_string
+
         return title
 
     def _escape(self, s):
