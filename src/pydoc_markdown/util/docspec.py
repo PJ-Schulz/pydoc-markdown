@@ -37,6 +37,10 @@ def is_method(obj: docspec.ApiObject) -> te.TypeGuard[docspec.Function]:
     return is_function(obj) and isinstance(obj.parent, docspec.Class)
 
 
+def is_nested_class(obj: docspec.ApiObject) -> te.TypeGuard[docspec.Class]:
+    return isinstance(obj, docspec.Class) and isinstance(obj.parent, docspec.Class)
+
+
 def is_property(obj: docspec.ApiObject) -> te.TypeGuard[docspec.Function]:
     return is_function(obj) and any(d.name == "property" for d in obj.decorations or [])
 

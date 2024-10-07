@@ -40,7 +40,7 @@ from pydoc_markdown.interfaces import (
     SinglePageRenderer,
     SourceLinker,
 )
-from pydoc_markdown.util.docspec import ApiSuite, format_function_signature, is_method
+from pydoc_markdown.util.docspec import ApiSuite, format_function_signature, is_method, is_nested_class
 from pydoc_markdown.util.misc import escape_except_blockquotes
 
 
@@ -189,6 +189,7 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
         default_factory=lambda: {
             "Module": 1,
             "Class": 2,
+            "NestedClass": 3,
             "Method": 4,
             "Function": 4,
             "Variable": 4,
@@ -234,6 +235,9 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
     def _is_method(self, obj: docspec.ApiObject) -> bool:
         return is_method(obj)
 
+    def _is_nested_class(self, obj: docspec.ApiObject) -> bool:
+        return is_nested_class(obj)
+
     def _format_arglist(self, func: docspec.Function) -> str:
         args = func.args[:]
         if self._is_method(func) and args and args[0].name == "self":
@@ -273,7 +277,12 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
             # Backwards compat for when we used "Data" instead of "Variable" which mirrors the docspec API
             header_levels["Variable"] = header_levels.get("Data", header_levels["Variable"])
 
-            type_name = "Method" if self._is_method(obj) else type(obj).__name__
+            if self._is_method(obj):
+                type_name = "Method"
+            elif self._is_nested_class(obj):
+                type_name = "NestedClass"
+            else:
+                type_name = type(obj).__name__
             level = header_levels.get(type_name, level)
         if self.insert_header_anchors and not self.html_headers:
             fp.write('<a id="{}"></a>\n\n'.format(object_id))
