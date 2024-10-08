@@ -254,7 +254,7 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
         title = self._escape(obj.name)
         if not self.add_module_prefix and isinstance(obj, docspec.Module):
             title = title.split(".")[-1]
-        fp.write("  " * level + "* [{}](#{})\n".format(title, object_id))
+        fp.write(" " * 4 * level + "* [{}](#{})\n".format(title, object_id))
         level += 1
         for child in getattr(obj, "members", []):
             self._render_toc(fp, level, child)
