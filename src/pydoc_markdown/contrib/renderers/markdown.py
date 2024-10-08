@@ -168,6 +168,9 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
     #: The title of the "Table of Contents" header.
     render_toc_title: str = "Table of Contents"
 
+    #: Adding the module name as level 0 to toc.
+    render_toc_module: bool = True
+
     #: The maximum depth of the table of contents. Defaults to 2.
     toc_maxdepth: int = 2
 
@@ -494,7 +497,11 @@ class MarkdownRenderer(Renderer, SinglePageRenderer, SingleObjectRenderer):
                     fp.write("# {}\n\n".format(self.render_toc_title))
 
             for m in modules:
-                self._render_toc(fp, 0, m)
+                if self.render_toc_module:
+                    self._render_toc(fp, 0, m)
+                else:
+                    for child in getattr(m, "members", []):
+                        self._render_toc(fp, 0, child)
             fp.write("\n")
         for m in modules:
             self._render_recursive(fp, 1, m)
