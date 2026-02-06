@@ -129,13 +129,17 @@ class GenericPage(t.Generic[T_Page]):
         matched_contents = set()
 
         def _match(obj: docspec.ApiObject) -> bool:
+            print("obj", obj)
             if self.contents:
                 path = ".".join(x.name for x in obj.path)
+                print("path", path)
                 for x in self.contents:
+                    print(x)
                     if fnmatch.fnmatch(path, x):
                         matched_contents.add(x)
                         return True
             if getattr(obj, "members", []):
+                print("members", obj.members)
                 return True
             return False
 
